@@ -43,6 +43,30 @@ class Pose:
         if self.id is None:
             self.id = Pose.last_id + 1
             Pose.last_id += 1
+        
+    def running_man_pose(self):
+        assert self.keypoints.shape == (Pose.num_kpts, 2)
+
+        neck_x = 0
+        l_ank_x = 0
+        r_ank_x = 0
+
+        for part_id in range(len(BODY_PARTS_PAF_IDS) - 2):
+            kpt_a_id = BODY_PARTS_KPT_IDS[part_id][0]
+            global_kpt_a_id = self.keypoints[kpt_a_id, 0]
+            if global_kpt_a_id != -1:
+                if (kpt_a_id == 1):
+                    neck_x, y_a = self.keypoints[kpt_a_id]
+
+            kpt_b_id = BODY_PARTS_KPT_IDS[part_id][1]
+            global_kpt_b_id = self.keypoints[kpt_b_id, 0]
+            if global_kpt_b_id != -1:
+                if (kpt_b_id == 10):# 10 'r_ank'
+                    r_ank_x, y_b = self.keypoints[kpt_b_id]
+                elif(kpt_b_id == 13):# 13 'l_ank'
+                    l_ank_x, y_b = self.keypoints[kpt_b_id]
+                    
+        return neck_x, l_ank_x, r_ank_x
 
     def draw(self, img):
         assert self.keypoints.shape == (Pose.num_kpts, 2)
@@ -52,14 +76,24 @@ class Pose:
             global_kpt_a_id = self.keypoints[kpt_a_id, 0]
             if global_kpt_a_id != -1:
                 x_a, y_a = self.keypoints[kpt_a_id]
-                cv2.circle(img, (int(x_a), int(y_a)), 3, Pose.color, -1)
+                if (kpt_a_id == 1):
+                    cv2.circle(img, (x_a, y_a), 10, [128, 128, 0], -1)
+
             kpt_b_id = BODY_PARTS_KPT_IDS[part_id][1]
             global_kpt_b_id = self.keypoints[kpt_b_id, 0]
             if global_kpt_b_id != -1:
                 x_b, y_b = self.keypoints[kpt_b_id]
-                cv2.circle(img, (int(x_b), int(y_b)), 3, Pose.color, -1)
+
+                if (kpt_b_id == 10):# 13 'r_ank'
+                    cv2.circle(img, (x_b, y_b), 10, [255, 255, 0], -1)
+                elif(kpt_b_id == 13):# 13 'l_ank'
+                    cv2.circle(img, (x_b, y_b), 10, [255, 0, 255], -1)
+                else:
+                    pass
+                    # cv2.circle(img, (int(x_b), int(y_b)), 3, [224, 255, 0], -1)
             if global_kpt_a_id != -1 and global_kpt_b_id != -1:
                 cv2.line(img, (int(x_a), int(y_a)), (int(x_b), int(y_b)), Pose.color, 2)
+                
 
 
 def get_similarity(a, b, threshold=0.5):
