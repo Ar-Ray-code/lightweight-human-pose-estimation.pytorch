@@ -62,11 +62,11 @@ class Pose:
             global_kpt_b_id = self.keypoints[kpt_b_id, 0]
             if global_kpt_b_id != -1:
                 if (kpt_b_id == 10):# 10 'r_ank'
-                    r_ank_x, y_b = self.keypoints[kpt_b_id]
+                    r_ank_x, r_ank_y = self.keypoints[kpt_b_id]
                 elif(kpt_b_id == 13):# 13 'l_ank'
-                    l_ank_x, y_b = self.keypoints[kpt_b_id]
+                    l_ank_x, l_ank_y = self.keypoints[kpt_b_id]
                     
-        return neck_x, l_ank_x, r_ank_x
+        return neck_x, l_ank_x, l_ank_y, r_ank_y, r_ank_x
 
     def draw(self, img):
         assert self.keypoints.shape == (Pose.num_kpts, 2)

@@ -118,6 +118,11 @@ def run_demo(net, image_provider, height_size, cpu, track, smooth):
             previous_poses = current_poses
         for pose in current_poses:
             pose.draw(img)
+            neck_x, l_ank_x, l_ank_y, r_ank_y, r_ank_x = pose.running_man_pose()
+            # print("center: ", neck_x, "l_ank_x: ", l_ank_x, "r_ank_x: ", r_ank_x)
+            left_ank_center = neck_x - l_ank_x
+            right_ank_center = neck_x - r_ank_x
+            print(left_ank_center, ",",right_ank_center)
         img = cv2.addWeighted(orig_img, 0.6, img, 0.4, 0)
         for pose in current_poses:
             cv2.rectangle(img, (pose.bbox[0], pose.bbox[1]),
